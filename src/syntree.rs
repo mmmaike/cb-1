@@ -1,4 +1,8 @@
-use std::fmt::{Display, Formatter};
+use std::{
+    borrow::BorrowMut,
+    fmt::{Display, Formatter},
+    ops::Deref,
+};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct ID(usize);
@@ -50,7 +54,23 @@ impl<'a, T> Syntree<T> {
     }
 
     pub fn seek_node_mut(&'a mut self, id: &ID) -> Option<&'a mut Syntree<T>> {
-        todo!()
+        //let found_node = self.seek_node(id).clone();
+        // let found_node = self.seek_node(id).take();
+        // let mut mut_node = found_node.unwrap().deref().clone();
+        // let unwrapped_syntree = &mut mut_node;
+        // let unwrapped = unwrapped_syntree;
+        // Some(&mut self.seek_node(id).take().unwrap())
+
+        if self.id == *id {
+            Some(self)
+        } else {
+            for child in &mut self.children {
+                if let Some(result) = &mut child.seek_node(id) {
+                    return Some(result);
+                }
+            }
+            None
+        }
     }
 }
 
