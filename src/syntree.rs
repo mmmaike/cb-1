@@ -1,8 +1,4 @@
-use std::{
-    borrow::BorrowMut,
-    fmt::{Display, Formatter},
-    ops::Deref,
-};
+use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct ID(usize);
@@ -18,7 +14,11 @@ pub struct Syntree<T> {
 // Hint: Start with seek_node_mut
 impl<'a, T> Syntree<T> {
     pub fn new(value: T, id: ID) -> Syntree<T> {
-        todo!()
+        Syntree {
+            id,
+            value,
+            children: Vec::new(),
+        }
     }
 
     pub fn push_node(&mut self, parent_id: ID, new_node: Syntree<T>) -> Result<(), String> {
@@ -35,7 +35,19 @@ impl<'a, T> Syntree<T> {
         index: usize,
         new_node: Syntree<T>,
     ) -> Result<(), String> {
-        todo!()
+        //find parent id and parent exists
+        if let Some(parent_node) = self.seek_node_mut(&parent_id) {
+            //Case: Parent has no children at index
+
+            //Case: Parent has children at index
+
+            //TODO
+            Ok(())
+        } else {
+            Err(String::from(
+                "Parent node does not exist, cannot insert behind.",
+            ))
+        }
     }
 
     // Anmerkung: `'a` Is ein Lebenszeit angabe für die Referenzen
@@ -54,18 +66,11 @@ impl<'a, T> Syntree<T> {
     }
 
     pub fn seek_node_mut(&'a mut self, id: &ID) -> Option<&'a mut Syntree<T>> {
-        //let found_node = self.seek_node(id).clone();
-        // let found_node = self.seek_node(id).take();
-        // let mut mut_node = found_node.unwrap().deref().clone();
-        // let unwrapped_syntree = &mut mut_node;
-        // let unwrapped = unwrapped_syntree;
-        // Some(&mut self.seek_node(id).take().unwrap())
-
         if self.id == *id {
             Some(self)
         } else {
             for child in &mut self.children {
-                if let Some(result) = &mut child.seek_node(id) {
+                if let Some(result) = child.seek_node_mut(id) {
                     return Some(result);
                 }
             }

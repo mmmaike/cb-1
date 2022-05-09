@@ -1,7 +1,6 @@
 use crate::Stack;
 use std::vec::Vec;
 
-// TODO Complete implementation
 impl Stack for Vec<i32> {
     fn init() -> Self {
         let vec: Vec<i32> = Vec::new();
