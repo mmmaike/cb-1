@@ -22,11 +22,31 @@ impl<'a, T> Syntree<T> {
     }
 
     pub fn push_node(&mut self, parent_id: ID, new_node: Syntree<T>) -> Result<(), String> {
-        todo!()
+        let parent = self.seek_node_mut(&parent_id);
+        match parent {
+            Some(parent) => {
+                parent.children.push(new_node);
+                Ok(())
+            }
+            _ => Err("Parent node does not exist, cannot append.".to_string()),
+        }
     }
 
     pub fn prepend_node(&mut self, parent_id: ID, new_node: Syntree<T>) -> Result<(), String> {
-        todo!()
+        let parent = self.seek_node_mut(&parent_id);
+        match parent {
+            Some(parent) => {
+                if parent.children.is_empty() {
+                    parent.children.push(new_node);
+                    Ok(())
+                } else {
+                    parent.children.push(new_node);
+                    parent.children.rotate_right(1);
+                    Ok(())
+                }
+            }
+            _ => Err("Parent node does not exist, cannot prepend.".to_string()),
+        }
     }
 
     pub fn insert_node(
@@ -35,17 +55,13 @@ impl<'a, T> Syntree<T> {
         index: usize,
         new_node: Syntree<T>,
     ) -> Result<(), String> {
-        //find parent id and parent exists
         if let Some(parent_node) = self.seek_node_mut(&parent_id) {
-            //Case: Parent has no children at index
-
-            //Case: Parent has children at index
-
-            //TODO
+            parent_node.children.insert(index, new_node);
             Ok(())
         } else {
-            Err(String::from(
-                "Parent node does not exist, cannot insert behind.",
+            Err(format!(
+                "Parent node does not exist, cannot insert at index {}.",
+                index
             ))
         }
     }
