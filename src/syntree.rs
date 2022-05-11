@@ -14,15 +14,35 @@ pub struct Syntree<T> {
 // Hint: Start with seek_node_mut
 impl<'a, T> Syntree<T> {
     pub fn new(value: T, id: ID) -> Syntree<T> {
-        todo!()
+        Syntree {
+            value,
+            id,
+            children: Vec::new(),
+        }
     }
 
     pub fn push_node(&mut self, parent_id: ID, new_node: Syntree<T>) -> Result<(), String> {
-        todo!()
+        if let Some(parent_node) = self.seek_node_mut(&parent_id) {
+            parent_node.children.push(new_node);
+            Ok(())
+        } else {
+            Err(String::from("Could not push node!"))
+        }
     }
 
     pub fn prepend_node(&mut self, parent_id: ID, new_node: Syntree<T>) -> Result<(), String> {
-        todo!()
+        if let Some(parent_node) = self.seek_node_mut(&parent_id) {
+            if parent_node.children.is_empty() {
+                parent_node.children.push(new_node);
+                Ok(())
+            } else {
+                parent_node.children.push(new_node);
+                parent_node.children.rotate_right(1);
+                Ok(())
+            }
+        } else {
+            Err(String::from("Could not prepend!"))
+        }
     }
 
     pub fn insert_node(
@@ -31,7 +51,12 @@ impl<'a, T> Syntree<T> {
         index: usize,
         new_node: Syntree<T>,
     ) -> Result<(), String> {
-        todo!()
+        if let Some(parent_node) = self.seek_node_mut(&parent_id) {
+            parent_node.children.insert(index, new_node);
+            Ok(())
+        } else {
+            Err(String::from("Could not insert node!"))
+        }
     }
 
     // Anmerkung: `'a` Is ein Lebenszeit angabe für die Referenzen
@@ -50,7 +75,16 @@ impl<'a, T> Syntree<T> {
     }
 
     pub fn seek_node_mut(&'a mut self, id: &ID) -> Option<&'a mut Syntree<T>> {
-        todo!()
+        if self.id == *id {
+            return Some(self);
+        }
+
+        for child in &mut self.children {
+            if let Some(result) = child.seek_node_mut(id) {
+                return Some(result);
+            }
+        }
+        return None;
     }
 }
 
