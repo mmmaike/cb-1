@@ -1,3 +1,6 @@
+# Abgabe
+Branch main ist der Abgabebranch.
+
 # Übungsblatt 1
 ## Generelles
 Die ersten beiden Aufgaben dienen zur Vertiefung Ihrer praktischen Erfahrungen in Rust. Sie implementieren einen Stack und eine Baumstruktur.
